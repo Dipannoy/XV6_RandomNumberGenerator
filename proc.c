@@ -88,7 +88,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-
+  p->nice = 0;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -174,6 +174,25 @@ growproc(int n)
   return 0;
 }
 
+// Set nice value of a process searching it with its id.
+// Return 0 on success and -1 on failure.
+int
+setprocnice(int pid, int niceVal)
+{
+  struct proc *p;
+  int setNiceVal;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid){
+      p->nice = niceVal;
+      setNiceVal = p->nice;
+      release(&ptable.lock);
+      return setNiceVal;
+    }
+  }
+  release(&ptable.lock);
+  return -1;
+}
 // Create a new process copying p as the parent.
 // Sets up stack to return as if from system call.
 // Caller must set state of returned proc to RUNNABLE.

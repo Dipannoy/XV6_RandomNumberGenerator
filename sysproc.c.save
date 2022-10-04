@@ -1,0 +1,143 @@
+#include "types.h"
+#include "x86.h"
+#include "defs.h"
+#include "date.h"
+#include "param.h"
+#include "memlayout.h"
+#include "mmu.h"
+#include "proc.h"
+#include <stdint.h>
+
+
+
+int
+sys_fork(void)
+{
+  return fork();
+}
+
+int
+sys_exit(void)
+{
+  exit();
+  return 0;  // not reached
+}
+
+int
+sys_wait(void)
+{
+  return wait();
+}
+
+int
+sys_kill(void)
+{
+  int pid;
+
+  if(argint(0, &pid) < 0)
+    return -1;
+  return kill(pid);
+}
+
+int
+sys_getpid(void)
+{
+  return myproc()->pid;
+}
+
+int
+sys_sbrk(void)
+{
+  int addr;
+  int n;
+
+  if(argint(0, &n) < 0)
+    return -1;
+  addr = myproc()->sz;
+  if(growproc(n) < 0)
+    return -1;
+  return addr;
+}
+
+int
+sys_sleep(void)
+{
+  int n;
+  uint ticks0;
+
+  if(argint(0, &n) < 0)
+    return -1;
+  acquire(&tickslock);
+  ticks0 = ticks;
+  while(ticks - ticks0 < n){
+    if(myproc()->killed){
+      release(&tickslock);
+      return -1;
+    }
+    sleep(&ticks, &tickslock);
+  }
+  release(&tickslock);
+  return 0;
+}
+
+// return how many clock tick interrupts have occurred
+// since start.
+int
+sys_uptime(void)
+{
+  uint xticks;
+
+  acquire(&tickslock);
+  xticks = ticks;
+  release(&tickslock);
+  return xticks;
+}
+//return the year of which
+//Unix version 6 was released
+
+int 
+sys_getyear(void) 
+{
+
+return 1975;
+} 
+
+int
+sys_setnice(int niceValue)
+{
+  int niceVal;
+  argint(0, &niceVal);
+  int result = setprocnice(1,niceVal);
+  return result;
+
+
+}
+int sys_generateprn(struct xorwow_state *state)
+{
+    /* Algorithm "xorwow" from p. 5 of Marsaglia, "Xorshift RNGs" */
+    uint t  = state->x[4];
+
+    uint s  = state->x[0];  /* Perform a contrived 32-bit shift. */
+    state->x[4] = state->x[3];
+    state->x[3] = state->x[2];
+    state->x[2] = state->x[1];
+    state->x[1] = s;
+
+    t ^= t >> 2;
+    t ^= t << 1;
+    t ^= s ^ (s << 4);
+    state->x[0] = t;
+    state->counter += 362437;
+    state->x[5] = t + state->counter;
+
+        struct xorwow_state xw;
+    //uint32_t seed[5] = {10,200,300,100,225};
+    xw.x[0] = state->x[0];
+    xw.x[1] = state->x[1];
+    xw.x[2] =  state->x[2];
+    xw.x[3] =  state->x[3];
+    xw.x[4] =  state->x[4];
+    xw.x[5] =  state->x[5];
+    xw.counter = state->counter;
+    return xw;
+}

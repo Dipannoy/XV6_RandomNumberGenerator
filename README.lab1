@@ -1,0 +1,35 @@
+Exercise 1:
+	A user program named nicetester.c has been created to test exercise-1.
+        The program passes a programId and niceValue to the corresponding system call.
+        If the process exists, the kernel code can set the nice value for the process and return the value to the user program.
+        Otherwise, sends a message regarding the missing process.
+        Initially, the processId and niceValue have been set as 1 and 100 respectively in the user program.
+        The values can be changed by modifying the user program.
+
+
+
+Exercise 2:
+       A user program named prntester.c has been created to test exercise-2.
+       The program calls the corresponding system call to generate 200 pseudo random numbers.
+       The range has been considered from 0 to 999.
+
+
+
+
+Discussions: 
+        In the nice value set up, initially I faced difficulties with parameter passing from the user program to system call.
+        As XV6 doesn't allow traditional parameter passing from the function. Then, I explored argint() function to serve this purpose.
+        I wanted to search process with a particular processId in the sysproc.c. However, it was not possible within the system call.
+        After skimming through proc.c, I got the solution.
+        In the pseudo random number generation, initially I tried with structure of C.
+        Because I have used multiple seeds for this process.
+        But the problem was that the system call can't return any data type except int.
+        Then I had to find another way out and it was reference. I sent multiple references to the system call.
+        Each time any read and write for the seeds and random numbers was executed through those reference pointers.
+        For pseudo random number generation, I have used one of the variations of Xorshift family.
+        Its called xorwow. Reference-https://en.wikipedia.org/wiki/Xorshift.
+        However, I have extended the algorithm to get at most 3 digit random numbers.
+        The idea was to extract middle 3 numbers from the output gained from xorwow.
+        Therefore, my PRNG creates random numbers from 0 to 999.
+       
+        

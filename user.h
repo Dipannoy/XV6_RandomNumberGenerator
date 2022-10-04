@@ -23,6 +23,9 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int getyear(void);
+int setnice(int,int);
+int generateprn(int*,int*,int*,int*,int*,int*,int*);
 
 // ulib.c
 int stat(const char*, struct stat*);

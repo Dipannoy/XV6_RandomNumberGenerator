@@ -55,10 +55,11 @@ printf(int fd, const char *fmt, ...)
       }
     } else if(state == '%'){
       if(c == 'd'){
-        printint(fd, *ap, 10, 1);
+        printint(fd, *ap, 10, 1); //Last argument has been set 0 for not checking the sign
         ap++;
-      } else if(c == 'x' || c == 'p'){
-        printint(fd, *ap, 16, 0);
+      }
+      else if(c == 'x' || c == 'p'){
+        printint(fd, *ap, 16, 1);
         ap++;
       } else if(c == 's'){
         s = (char*)*ap;
