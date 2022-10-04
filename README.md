@@ -1,0 +1,2 @@
+# XV6_RandomNumberGenerator
+This codebase works to generate pseudo random number in order to apply lottery scheduling. For pseudo random number generation, I have used one of the variations of Xorshift family. Its called xorwow. Reference-https://en.wikipedia.org/wiki/Xorshift. However, I have extended the algorithm to get at most 3 digit random numbers. The idea was to extract middle 3 numbers from the output gained from xorwow. Therefore, my PseudoRandomNumberGenerator creates random numbers from 0 to 999.
